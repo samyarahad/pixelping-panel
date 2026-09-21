@@ -18,10 +18,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "نام کاربری یا رمز عبور اشتباه است" }, { status: 401 });
     }
 
-    const token = createSessionToken(admin);
+    const token = await createSessionToken(admin);
+    const mustChangePassword = verifyPassword("admin123", admin.passwordHash);
     const res = NextResponse.json({
       ok: true,
       admin: { id: admin.id, username: admin.username, role: admin.role },
+      mustChangePassword,
     });
     const opts = sessionCookieOptions();
     res.cookies.set({ ...opts, value: token });

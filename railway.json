@@ -5,7 +5,7 @@
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "startCommand": "mkdir -p /data && bun server/migrate.js && bun server/index.js",
+    "startCommand": "mkdir -p /data 2>/dev/null || true; bun server/migrate.js && bun server/index.js",
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",

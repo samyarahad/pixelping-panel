@@ -15,16 +15,10 @@
 const { Database } = require("bun:sqlite");
 const fs = require("node:fs");
 const path = require("node:path");
+const { applyDbPath } = require("./dbpath");
 
-function resolveDbPath() {
-  const raw = process.env.DATABASE_URL || "file:/data/pixelping.db";
-  let p = raw.replace(/^file:/, "");
-  // آدرس نسبی نسبت به پوشه اجرا
-  if (!path.isAbsolute(p)) p = path.join(process.cwd(), p);
-  return p;
-}
-
-const DB_PATH = resolveDbPath();
+const DB_PATH = applyDbPath();
+console.log("[pixel-ping] using database:", DB_PATH);
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 
 const db = new Database(DB_PATH);

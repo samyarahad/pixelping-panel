@@ -17,6 +17,10 @@ const { spawn } = require("node:child_process");
 const dgram = require("node:dgram");
 const path = require("node:path");
 
+// مسیر دیتابیس را قبل از ساخت کلاینت Prisma اصلاح کن (صفر-کانفیگ)
+const { applyDbPath } = require("./dbpath");
+applyDbPath();
+
 const PORT = Number(process.env.PORT || 3000);
 const NEXT_INTERNAL_PORT = Number(process.env.NEXT_INTERNAL_PORT || 3001);
 

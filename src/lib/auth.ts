@@ -5,8 +5,60 @@ import { db } from "@/lib/db";
 const SESSION_COOKIE = "pixelping_session";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 روز
 
-function getSecret(): string {
-  return process.env.SESSION_SECRET || "pixelping-dev-secret-change-me";
+// مقادیر نمونه/پیش‌فرض که نباید در پروداکشن استفاده شوند → خودکار می‌سازیم
+const PLACEHOLDER_SECRET = /^(pixelping|x4g)-(change-this|panel-dev-secret|dev-secret)/i;
+
+let cachedSecret: string | null = null;
+let secretPromise: Promise<string> | null = null;
+
+/**
+ * کلید امضای نشست — صفر-کانفیگ:
+ *   ۱) اگر SESSION_SECRET واقعی تنظیم شده باشد از همان استفاده می‌شود
+ *   ۲) وگرنه یک کلید تصادفی قوی ساخته، در دیتابیس (جدول Setting) ذخیره
+ *      و در اجراهای بعدی از دیتابیس خوانده می‌شود
+ */
+export function getSessionSecret(): Promise<string> {
+  if (cachedSecret) return Promise.resolve(cachedSecret);
+  if (!secretPromise) {
+    secretPromise = resolveSecret()
+      .then((s) => {
+        cachedSecret = s;
+        return s;
+      })
+      .catch((e) => {
+        secretPromise = null;
+        throw e;
+      });
+  }
+  return secretPromise;
+}
+
+async function resolveSecret(): Promise<string> {
+  const env = (process.env.SESSION_SECRET || "").trim();
+  if (env.length >= 16 && !PLACEHOLDER_SECRET.test(env)) return env;
+
+  try {
+    const row = await db.setting.findUnique({ where: { key: "sessionSecret" } });
+    if (row?.value) return row.value;
+
+    const generated = randomBytes(32).toString("hex");
+    try {
+      await db.setting.create({ data: { key: "sessionSecret", value: generated } });
+      console.log("[auth] SESSION_SECRET auto-generated and persisted to database");
+    } catch {
+      // مسابقه‌ی ایجاد همزمان — دوباره بخوان
+      const again = await db.setting.findUnique({ where: { key: "sessionSecret" } });
+      if (again?.value) return again.value;
+    }
+    return generated;
+  } catch {
+    // دیتابیس در دسترس نیست — آخرین راه
+    return env || "pixelping-dev-secret-change-me";
+  }
+}
+
+function sign(data: string, secret: string): string {
+  return createHmac("sha256", secret).update(data).digest("base64url");
 }
 
 // ---------- رمزنگاری پسورد (scrypt) ----------
@@ -35,11 +87,12 @@ interface SessionPayload {
   exp: number;
 }
 
-function sign(data: string): string {
-  return createHmac("sha256", getSecret()).update(data).digest("base64url");
-}
-
-export function createSessionToken(admin: { id: string; username: string; role: string }): string {
+export async function createSessionToken(admin: {
+  id: string;
+  username: string;
+  role: string;
+}): Promise<string> {
+  const secret = await getSessionSecret();
   const payload: SessionPayload = {
     sub: admin.id,
     username: admin.username,
@@ -47,14 +100,15 @@ export function createSessionToken(admin: { id: string; username: string; role: 
     exp: Date.now() + SESSION_TTL_MS,
   };
   const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
-  return `${body}.${sign(body)}`;
+  return `${body}.${sign(body, secret)}`;
 }
 
-export function verifySessionToken(token: string): SessionPayload | null {
+export async function verifySessionToken(token: string): Promise<SessionPayload | null> {
   try {
     const [body, sig] = token.split(".");
     if (!body || !sig) return null;
-    const expected = sign(body);
+    const secret = await getSessionSecret();
+    const expected = sign(body, secret);
     const a = Buffer.from(sig);
     const b = Buffer.from(expected);
     if (a.length !== b.length || !timingSafeEqual(a, b)) return null;

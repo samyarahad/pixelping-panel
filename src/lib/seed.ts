@@ -4,6 +4,15 @@ import { hashPassword } from "@/lib/auth";
 
 let seedPromise: Promise<void> | null = null;
 
+/** رمز تصادفی قابل‌خواندن (بدون کاراکترهای گیج‌کننده 0/O و 1/l/I) */
+function generateStrongPassword(len = 12): string {
+  const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%&*";
+  const bytes = randomBytes(len);
+  let out = "";
+  for (let i = 0; i < len; i++) out += chars[bytes[i] % chars.length];
+  return out;
+}
+
 /** یک‌بار در طول عمر پروسس اجرا می‌شود */
 export function ensureSeed(): Promise<void> {
   if (!seedPromise) {
@@ -16,22 +25,43 @@ export function ensureSeed(): Promise<void> {
 }
 
 async function doSeed(): Promise<void> {
-  // ۱) ادمین پیش‌فرض
+  // ۱) ادمین پیش‌فرض — صفر-کانفیگ:
+  //    - اگر DEFAULT_ADMIN_PASS واقعی تنظیم شده باشد از همان استفاده می‌شود
+  //    - وگرنه رمز قوی تصادفی ساخته و در لاگ‌های استارت چاپ می‌شود
   const adminCount = await db.panelAdmin.count();
   if (adminCount === 0) {
+    const username = (process.env.DEFAULT_ADMIN_USER || "").trim() || "admin";
+    const envPass = (process.env.DEFAULT_ADMIN_PASS || "").trim();
+    const usingEnvPass = envPass.length > 0 && envPass !== "admin123";
+    const password = usingEnvPass ? envPass : generateStrongPassword(12);
+
     await db.panelAdmin.create({
       data: {
-        username: process.env.DEFAULT_ADMIN_USER || "admin",
-        passwordHash: hashPassword(process.env.DEFAULT_ADMIN_PASS || "admin123"),
+        username,
+        passwordHash: hashPassword(password),
         role: "admin",
       },
     });
-    console.log("[seed] default admin created (admin / admin123)");
+
+    if (usingEnvPass) {
+      console.log(`[seed] admin "${username}" created (password from DEFAULT_ADMIN_PASS env)`);
+    } else {
+      console.log(""+(
+        "\n" +
+        "============================================================\n" +
+        `  [seed] PIXEL PING admin "${username}" created` +
+        "\n" +
+        `  INITIAL ADMIN PASSWORD: ${password}\n` +
+        "  (auto-generated — please change it after first login)\n" +
+        "  رمز عبور اولیه ادمین بالا است — بعد از ورود عوضش کنید\n" +
+        "============================================================"
+      ));
+    }
   }
 
-  // ۲) کاربران نمونه
+  // ۲) کاربران نمونه (قابل غیرفعال‌سازی با DEMO_DATA=0)
   const vpnUserCount = await db.vpnUser.count();
-  if (vpnUserCount === 0) {
+  if (vpnUserCount === 0 && process.env.DEMO_DATA !== "0") {
     const now = Date.now();
     const day = 24 * 60 * 60 * 1000;
     const GB = 1024 * 1024 * 1024;

@@ -35,11 +35,11 @@ Next.js 16 (App Router) · TypeScript · Tailwind CSS 4 · shadcn/ui · Prisma (
 خلاصه:
 
 1. در Railway: **New Project → Deploy from GitHub repo** → این ریپو را انتخاب کنید
-2. یک **Volume** با مسیر `/data` به سرویس اضافه کنید
-3. متغیرهای محیطی: `DATABASE_URL=file:/data/pixelping.db` و `SESSION_SECRET` (تصادفی)
+2. یک **Volume** با مسیر `/data` اضافه کنید (اختیاری ولی توصیه‌شده)
+3. هیچ متغیری لازم نیست — پنل صفر-کانفیگ است ✨ (رمز ادمین اولیه در لاگ استارت چاپ می‌شود)
 4. **Generate Domain** بگیرید — تمام!
 
-ورود پیش‌فرض: `admin / admin123` — بلافاصله از تنظیمات عوضش کنید.
+ورود اولیه: نام کاربری `admin` و رمز تصادفی که در لاگ استارت چاپ می‌شود (`INITIAL ADMIN PASSWORD`) — پنل بعد از اولین ورود، تغییر رمز را اجباری می‌کند.
 
 ## 🖥 اجرای محلی
 

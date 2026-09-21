@@ -39,4 +39,4 @@ COPY --from=builder /app/package.json ./package.json
 EXPOSE 3000
 
 # ساخت اسکیمای دیتابیس با bun:sqlite و اجرای سرور لبه (پنل + نود VLESS)
-CMD ["sh", "-c", "mkdir -p /data && bun server/migrate.js && exec bun server/index.js"]
+CMD ["sh", "-c", "mkdir -p /data 2>/dev/null || true; bun server/migrate.js && exec bun server/index.js"]

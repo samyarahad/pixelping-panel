@@ -158,6 +158,11 @@ export const dictionaries = {
     // فوتر
     footerText: "پنل مدیریت VPN — آماده دیپلوی روی Railway",
     version: "نسخه",
+    // تغییر اجباری رمز
+    forceChangeTitle: "تغییر رمز عبور الزامی است",
+    forceChangeDesc: "رمز عبور ادمین هنوز روی مقدار پیش‌فرض است. برای امنیت پنل، لطفاً همین حالا یک رمز قوی انتخاب کنید.",
+    confirmPass: "تکرار رمز جدید",
+    passMismatch: "رمزها یکسان نیستند",
     // خطاها
     reqFailed: "درخواست ناموفق بود",
   },
@@ -305,6 +310,11 @@ export const dictionaries = {
     externalNode: "External Server",
     footerText: "VPN Management Panel — ready to deploy on Railway",
     version: "v1.0",
+    // Forced password change
+    forceChangeTitle: "Password Change Required",
+    forceChangeDesc: "The admin password is still the default value. For panel security, please choose a strong password now.",
+    confirmPass: "Confirm new password",
+    passMismatch: "Passwords do not match",
     reqFailed: "Request failed",
   },
 } as const;

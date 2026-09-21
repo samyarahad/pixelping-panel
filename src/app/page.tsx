@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { LoginView } from "@/components/panel/login-view";
+import { ForceChangePassword } from "@/components/panel/force-password";
 import { DashboardView } from "@/components/panel/dashboard-view";
 import { UsersView } from "@/components/panel/users-view";
 import { SettingsView } from "@/components/panel/settings-view";
@@ -20,6 +21,7 @@ function PanelShell() {
   const { t, lang, setLang } = useI18n();
   const [booting, setBooting] = useState(true);
   const [admin, setAdmin] = useState<AdminInfo | null>(null);
+  const [mustChange, setMustChange] = useState(false);
   const [tab, setTab] = useState<Tab>("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -38,7 +40,10 @@ function PanelShell() {
       try {
         const res = await fetch("/api/auth/me");
         const data = await res.json();
-        if (data.admin) setAdmin(data.admin);
+        if (data.admin) {
+          setAdmin(data.admin);
+          setMustChange(!!data.mustChangePassword);
+        }
       } catch {
         /* بدون نشست */
       } finally {
@@ -110,6 +115,7 @@ function PanelShell() {
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
     setAdmin(null);
+    setMustChange(false);
     setStats(null);
     setUsers(null);
     setSettings(null);
@@ -124,7 +130,9 @@ function PanelShell() {
     );
   }
 
-  if (!admin) return <LoginView onLogin={setAdmin} />;
+  if (!admin) return <LoginView onLogin={(a, mc) => { setAdmin(a); setMustChange(!!mc); }} />;
+
+  if (mustChange) return <ForceChangePassword onDone={() => setMustChange(false)} />;
 
   const NAV: { key: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
     { key: "dashboard", label: t("dashboard"), icon: LayoutDashboard },

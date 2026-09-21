@@ -78,7 +78,7 @@ function CursorGlow() {
   );
 }
 
-export function LoginView({ onLogin }: { onLogin: (admin: AdminInfo) => void }) {
+export function LoginView({ onLogin }: { onLogin: (admin: AdminInfo, mustChangePassword?: boolean) => void }) {
   const { t, lang, setLang } = useI18n();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -101,7 +101,7 @@ export function LoginView({ onLogin }: { onLogin: (admin: AdminInfo) => void }) 
         setError(data.error || t("loginFailed"));
         return;
       }
-      onLogin(data.admin);
+      onLogin(data.admin, !!data.mustChangePassword);
     } catch {
       setError(t("serverError"));
     } finally {
