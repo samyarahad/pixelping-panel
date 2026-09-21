@@ -36,7 +36,7 @@ Next.js 16 (App Router) · TypeScript · Tailwind CSS 4 · shadcn/ui · Prisma (
 
 1. در Railway: **New Project → Deploy from GitHub repo** → این ریپو را انتخاب کنید
 2. یک **Volume** با مسیر `/data` به سرویس اضافه کنید
-3. متغیرهای محیطی: `DATABASE_URL=file:/data/x4g.db` و `SESSION_SECRET` (تصادفی)
+3. متغیرهای محیطی: `DATABASE_URL=file:/data/pixelping.db` و `SESSION_SECRET` (تصادفی)
 4. **Generate Domain** بگیرید — تمام!
 
 ورود پیش‌فرض: `admin / admin123` — بلافاصله از تنظیمات عوضش کنید.

@@ -15,7 +15,7 @@ RUN DATABASE_URL=file:/tmp/build.db bun run build
 FROM oven/bun:1.2 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-ENV DATABASE_URL=file:/data/x4g.db
+ENV DATABASE_URL=file:/data/pixelping.db
 ENV PORT=3000
 ENV NEXT_INTERNAL_PORT=3001
 

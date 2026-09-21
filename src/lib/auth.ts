@@ -2,11 +2,11 @@ import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 
-const SESSION_COOKIE = "x4g_session";
+const SESSION_COOKIE = "pixelping_session";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 روز
 
 function getSecret(): string {
-  return process.env.SESSION_SECRET || "x4g-panel-dev-secret-change-me";
+  return process.env.SESSION_SECRET || "pixelping-dev-secret-change-me";
 }
 
 // ---------- رمزنگاری پسورد (scrypt) ----------

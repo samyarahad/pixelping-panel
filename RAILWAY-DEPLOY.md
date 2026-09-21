@@ -52,7 +52,7 @@
 
 | متغیر | مقدار |
 |-------|-------|
-| `DATABASE_URL` | `file:/data/x4g.db` |
+| `DATABASE_URL` | `file:/data/pixelping.db` |
 | `SESSION_SECRET` | یک رشته تصادفی طولانی (خروجی `openssl rand -hex 32`) |
 | `DEFAULT_ADMIN_USER` | نام کاربری ادمین (پیش‌فرض: `admin`) |
 | `DEFAULT_ADMIN_PASS` | رمز ادمین (پیش‌فرض: `admin123`) ⚠️ حتماً عوض کنید |
