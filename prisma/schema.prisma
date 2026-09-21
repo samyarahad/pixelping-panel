@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ادمین‌های پنل (ورود به پنل مدیریت)
+model PanelAdmin {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  role         String   @default("admin") // admin | viewer
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// کاربران VPN که ادمین ایجاد می‌کند
+model VpnUser {
+  id                String    @id @default(cuid())
+  username          String    @unique
+  note              String?
+  status            String    @default("active") // active | disabled
+  quotaBytes        Float     @default(0) // 0 = نامحدود
+  usedBytes         Float     @default(0)
+  expiryDate        DateTime?
+  uuid              String    @unique
+  subscriptionToken String    @unique @default(cuid())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  trafficLogs       TrafficLog[]
+}
+
+// لاگ ترافیک روزانه (برای نمودار داشبورد)
+model TrafficLog {
+  id        String   @id @default(cuid())
+  vpnUserId String
+  vpnUser   VpnUser  @relation(fields: [vpnUserId], references: [id], onDelete: Cascade)
+  day       String   // YYYY-MM-DD
+  upBytes   Float    @default(0)
+  downBytes Float    @default(0)
+  createdAt DateTime @default(now())
+
+  @@unique([vpnUserId, day])
+}
+
+// تنظیمات پنل (key-value)
+model Setting {
+  key   String @id
+  value String
+}

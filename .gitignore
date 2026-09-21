@@ -1,0 +1,35 @@
+# dependencies
+node_modules/
+
+# build
+.next/
+out/
+build/
+
+# database & logs
+db/
+*.db
+*.log
+server.log
+dev.log
+
+# env & secrets
+.env
+.env.local
+
+# project-local tooling & scratch
+.zscripts/
+scripts/
+skills/
+examples/
+agent-ctx/
+worklog.md
+github_profile.json
+repos.json
+gh_page.html
+ref_panel.html
+z-ai-function-output*
+
+# os / editor
+.DS_Store
+Thumbs.db

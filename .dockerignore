@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+db
+*.db
+*.log
+.env
+.github
+scripts
+examples
+skills
+agent-ctx
+z-ai-function-output*
+github_profile.json
+repos.json
+gh_page.html

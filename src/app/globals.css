@@ -1,0 +1,239 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ---------- PIXEL PING theme: deep navy + electric blue neon ---------- */
+:root,
+.dark {
+  --radius: 0.8rem;
+  --background: #040914;
+  --foreground: #e8eef8;
+  --card: #0b1426;
+  --card-foreground: #e8eef8;
+  --popover: #0b1426;
+  --popover-foreground: #e8eef8;
+  --primary: #2563eb;
+  --primary-foreground: #eaf2ff;
+  --secondary: #121c35;
+  --secondary-foreground: #bfdbfe;
+  --muted: #0e1830;
+  --muted-foreground: #7e93b8;
+  --accent: #16244a;
+  --accent-foreground: #dbe9ff;
+  --destructive: #ef4444;
+  --border: rgba(96, 140, 230, 0.16);
+  --input: rgba(96, 140, 230, 0.22);
+  --ring: rgba(37, 99, 235, 0.55);
+  --chart-1: #2563eb;
+  --chart-2: #38bdf8;
+  --chart-3: #8b5cf6;
+  --chart-4: #f59e0b;
+  --chart-5: #ef4444;
+  --sidebar: #060d1d;
+  --sidebar-foreground: #e8eef8;
+  --sidebar-primary: #2563eb;
+  --sidebar-primary-foreground: #eaf2ff;
+  --sidebar-accent: #121c35;
+  --sidebar-accent-foreground: #bfdbfe;
+  --sidebar-border: rgba(96, 140, 230, 0.14);
+  --sidebar-ring: rgba(37, 99, 235, 0.55);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: Vazirmatn, "Segoe UI", Tahoma, system-ui, sans-serif;
+  }
+}
+
+/* ---------- اسکرول‌بار ---------- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(96, 140, 230, 0.3);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 99, 235, 0.6);
+}
+
+/* ---------- پس‌زمینه با تینت‌های شعاعی ---------- */
+.pp-bg-scene {
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(700px 500px at 12% 18%, rgba(37, 99, 235, 0.14), transparent 65%),
+    radial-gradient(800px 600px at 90% 88%, rgba(30, 64, 175, 0.12), transparent 65%),
+    radial-gradient(500px 400px at 85% 10%, rgba(56, 189, 248, 0.05), transparent 60%),
+    #040914;
+}
+
+/* ---------- کارت شیشه‌ای ---------- */
+.glass-card {
+  background: linear-gradient(165deg, rgba(18, 28, 53, 0.62), rgba(11, 20, 38, 0.92));
+  border: 1px solid rgba(96, 140, 230, 0.16);
+  backdrop-filter: blur(14px);
+}
+
+.glow-primary {
+  box-shadow:
+    0 0 22px rgba(37, 99, 235, 0.18),
+    inset 0 1px 0 rgba(147, 197, 253, 0.08);
+}
+
+.neon-text {
+  text-shadow:
+    0 0 12px rgba(37, 99, 235, 0.65),
+    0 0 32px rgba(37, 99, 235, 0.35);
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- دنباله درخشان موس (cursor glow) ---------- */
+.pp-cursor-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.pp-cursor-glow.on {
+  opacity: 1;
+}
+.pp-cursor-glow::before {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.13), transparent 60%);
+}
+.pp-cursor-ring {
+  position: fixed;
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid rgba(96, 165, 250, 0.5);
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  transition: width 0.18s ease, height 0.18s ease, border-color 0.18s ease;
+  opacity: 0;
+}
+.pp-cursor-ring.on {
+  opacity: 1;
+}
+@media (pointer: coarse) {
+  .pp-cursor-glow,
+  .pp-cursor-ring {
+    display: none;
+  }
+}
+
+/* ---------- موج‌های پایین صفحه ---------- */
+.pp-waves {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 15vh;
+  min-height: 90px;
+  max-height: 160px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.pp-waves svg {
+  position: absolute;
+  bottom: 0;
+  width: 200%;
+  height: 100%;
+}
+.pp-wave-1 { animation: pp-wave-move 9s linear infinite alternate; opacity: 0.5; }
+.pp-wave-2 { animation: pp-wave-move 14s linear infinite alternate-reverse; opacity: 0.35; }
+.pp-wave-3 { animation: pp-wave-move 7s linear infinite alternate; opacity: 0.6; }
+@keyframes pp-wave-move {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ---------- حلقه‌های پینگ لوگو ---------- */
+.pp-ping-anim {
+  transform-origin: center;
+  animation: pp-ping-ring 2.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes pp-ping-ring {
+  0% { opacity: 0.7; }
+  70% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* ---------- دکمه نئونی ---------- */
+.btn-neon {
+  background: linear-gradient(180deg, #2f6ff0, #1d4ed8);
+  box-shadow:
+    0 0 10px rgba(37, 99, 235, 0.45),
+    0 0 24px rgba(37, 99, 235, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+}
+.btn-neon:hover {
+  box-shadow:
+    0 0 16px rgba(37, 99, 235, 0.65),
+    0 0 40px rgba(37, 99, 235, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+.btn-neon:active {
+  transform: translateY(1px);
+}
