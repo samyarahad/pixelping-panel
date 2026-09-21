@@ -19,7 +19,24 @@ const path = require("node:path");
 
 const PORT = Number(process.env.PORT || 3000);
 const NEXT_INTERNAL_PORT = Number(process.env.NEXT_INTERNAL_PORT || 3001);
-const STANDALONE_SERVER = path.join(process.cwd(), ".next", "standalone", "server.js");
+
+// ---------- مکان سرور استندالون ----------
+// دو چیدمان ممکن است:
+//   ۱) ریپو/توسعه: <cwd>/.next/standalone/server.js
+//   ۲) داکر: محتوای standalone در /app کپی شده ⇒ <cwd>/server.js
+function resolveStandaloneServer() {
+  const fs = require("node:fs");
+  const candidates = [
+    path.join(process.cwd(), ".next", "standalone", "server.js"),
+    path.join(process.cwd(), "server.js"),
+  ];
+  for (const p of candidates) {
+    try {
+      if (fs.existsSync(p)) return p;
+    } catch {}
+  }
+  return null;
+}
 
 // ---------- دیتابیس ----------
 let prisma = null;
@@ -243,12 +260,12 @@ function handleVless(ws, firstMsg) {
 
 // ---------- اجرای Next standalone ----------
 function startNext() {
-  const fs = require("node:fs");
-  if (!fs.existsSync(STANDALONE_SERVER)) {
+  const standalone = resolveStandaloneServer();
+  if (!standalone) {
     console.warn("[pixel-ping] standalone server not found — node-only mode (no HTTP panel)");
     return;
   }
-  const child = spawn("bun", [STANDALONE_SERVER], {
+  const child = spawn("bun", [standalone], {
     env: { ...process.env, PORT: String(NEXT_INTERNAL_PORT), HOSTNAME: "127.0.0.1" },
     stdio: "inherit",
   });
